@@ -29,7 +29,7 @@ public class ServiceRequester2 implements Callable<Canvas> {
 	public Canvas call() throws Exception {
 		Client client = new Client(request, FRONTEND_URL);
 		client.start();
-		Canvas canvas = MadelBrotService.getMadelBrotCanvas(client.getResponce());
+		Canvas canvas = MadelBrotService.getMadelBrotCanvas2(client.getResponce());
 		return canvas;
 	}
 

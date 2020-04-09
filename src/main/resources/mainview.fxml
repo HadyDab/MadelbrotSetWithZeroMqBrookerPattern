@@ -77,9 +77,6 @@
       </AnchorPane>
    </top>
    <center>
-      <ScrollPane fx:id="scrolllPane" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets left="5.0" right="5.0" />
-         </BorderPane.margin></ScrollPane>
+      <ScrollPane fx:id="scrolllPane" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

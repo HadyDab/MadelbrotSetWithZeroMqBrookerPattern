@@ -3,6 +3,7 @@
  */
 package gui.main;
 
+import java.io.File;
 import java.net.URL;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,21 +29,20 @@ public class ZeroMqViewer extends Application{
 	public void start(Stage primaryStage) throws Exception {
 		
 		try {
-			
-			
+
 
 			URL filepath = getClass().getResource("/gui/view/mainview.fxml");
-			
-			
+
 			FXMLLoader loader = new FXMLLoader(filepath);
-			ZeroMqController controler = new ZeroMqController();
-			loader.setController(controler);
+			ZeroMqController controller = new ZeroMqController();
+			loader.setController(controller);
 			
 			BorderPane root = (BorderPane) loader.load();
 			Scene scene = new Scene(root);
 			
-			scene.getStylesheets().add(getClass().getResource("/gui/main/view.css").toExternalForm());
+			//scene.getStylesheets().add(getClass().getResource("main/view.css").toExternalForm());
 			primaryStage.setScene(scene);
+			primaryStage.setTitle("Madelbrot with Javafx and JeroMq");
 			primaryStage.setOnCloseRequest(e -> handleExit());
 			primaryStage.show();
 			

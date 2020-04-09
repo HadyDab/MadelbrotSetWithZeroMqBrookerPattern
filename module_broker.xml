@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_broker" default="compile.module.broker">
+  <dirname property="module.broker.basedir" file="${ant.file.module_broker}"/>
+  
+  <property name="module.jdk.home.broker" value="${jdk.home.1.8}"/>
+  <property name="module.jdk.bin.broker" value="${jdk.bin.1.8}"/>
+  <property name="module.jdk.classpath.broker" value="jdk.classpath.1.8"/>
+  
+  <property name="compiler.args.broker" value="-encoding UTF-8 -source 8 -target 8 ${compiler.args}"/>
+  
+  <property name="broker.output.dir" value="${module.broker.basedir}/target/classes"/>
+  <property name="broker.testoutput.dir" value="${module.broker.basedir}/target/test-classes"/>
+  
+  <path id="broker.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="broker.module.production.classpath">
+    <path refid="${module.jdk.classpath.broker}"/>
+    <path refid="library.maven:_org.zeromq:jeromq:0.5.1-snapshot.classpath"/>
+    <path refid="library.maven:_eu.neilalexander:jnacl:1.0.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.8.1.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.8.5.classpath"/>
+  </path>
+  
+  <path id="broker.runtime.production.module.classpath">
+    <pathelement location="${broker.output.dir}"/>
+    <path refid="library.maven:_org.zeromq:jeromq:0.5.1-snapshot.classpath"/>
+    <path refid="library.maven:_eu.neilalexander:jnacl:1.0.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.8.1.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.8.5.classpath"/>
+  </path>
+  
+  <path id="broker.module.classpath">
+    <path refid="${module.jdk.classpath.broker}"/>
+    <pathelement location="${broker.output.dir}"/>
+    <path refid="library.maven:_org.zeromq:jeromq:0.5.1-snapshot.classpath"/>
+    <path refid="library.maven:_eu.neilalexander:jnacl:1.0.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.8.1.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.8.5.classpath"/>
+  </path>
+  
+  <path id="broker.runtime.module.classpath">
+    <pathelement location="${broker.testoutput.dir}"/>
+    <pathelement location="${broker.output.dir}"/>
+    <path refid="library.maven:_org.zeromq:jeromq:0.5.1-snapshot.classpath"/>
+    <path refid="library.maven:_eu.neilalexander:jnacl:1.0.0.classpath"/>
+    <path refid="library.maven:_org.apache.commons:commons-lang3:3.8.1.classpath"/>
+    <path refid="library.maven:_com.google.code.gson:gson:2.8.5.classpath"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.broker">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.broker">
+    <patternset refid="excluded.from.module.broker"/>
+  </patternset>
+  
+  <path id="broker.module.sourcepath">
+    <dirset dir="${module.broker.basedir}">
+      <include name="src/main/java"/>
+    </dirset>
+  </path>
+  
+  
+  <target name="compile.module.broker" depends="compile.module.broker.production,compile.module.broker.tests" description="Compile module broker"/>
+  
+  <target name="compile.module.broker.production" depends="register.custom.compilers" description="Compile module broker; production classes">
+    <mkdir dir="${broker.output.dir}"/>
+    <javac2 destdir="${broker.output.dir}" debug="${compiler.debug}" nowarn="${compiler.generate.no.warnings}" memorymaximumsize="${compiler.max.memory}" fork="true" executable="${module.jdk.bin.broker}/javac">
+      <compilerarg line="${compiler.args.broker}"/>
+      <bootclasspath refid="broker.module.bootclasspath"/>
+      <classpath refid="broker.module.production.classpath"/>
+      <src refid="broker.module.sourcepath"/>
+      <patternset refid="excluded.from.compilation.broker"/>
+    </javac2>
+    
+    <copy todir="${broker.output.dir}">
+      <fileset dir="${module.broker.basedir}/src/main/java">
+        <patternset refid="compiler.resources"/>
+        <type type="file"/>
+      </fileset>
+    </copy>
+  </target>
+  
+  <target name="compile.module.broker.tests" depends="register.custom.compilers,compile.module.broker.production" description="compile module broker; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.broker" description="cleanup module">
+    <delete dir="${broker.output.dir}"/>
+    <delete dir="${broker.testoutput.dir}"/>
+  </target>
+</project>

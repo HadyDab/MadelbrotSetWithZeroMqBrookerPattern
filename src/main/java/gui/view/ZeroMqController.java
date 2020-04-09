@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.UnaryOperator;
 
 import gui.main.ServiceRequester2;
+import gui.main.ServiceRequesterImage;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -23,6 +24,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextFormatter.Change;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import loadbalancingbroker.WorkerThread;
@@ -125,10 +127,46 @@ public class ZeroMqController {
 			return;
 		}
 		
-		createMadelBrotImage(request);
+		createMadelBrotImage2(request);
 
 	}
 
+	private void createMadelBrotImage2(MadelBrotRequest request){
+
+		int numberOfWorkers = workerSpinner.getValue();
+		// Create workers base on number of workers
+		for(int i = 0; i < numberOfWorkers; i++) {
+			WorkerThread worker = new WorkerThread();
+			executor.execute(worker);
+		}
+
+		ServiceRequesterImage requester = new ServiceRequesterImage(request);
+		Future<Image>  madelbrotImage = executor.submit(requester);
+
+		while(!madelbrotImage.isDone()) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+
+		try {
+			if(madelbrotImage.isDone()) {
+				Image result = madelbrotImage.get(100, TimeUnit.MILLISECONDS);
+				ImageView viewer = new ImageView(result);
+				imageViewerPane.getChildren().clear();
+				imageViewerPane.getChildren().add(viewer);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+
+
+
+	}
 	
 	private void createMadelBrotImage(MadelBrotRequest request) {
 		
